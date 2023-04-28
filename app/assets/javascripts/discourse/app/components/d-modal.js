@@ -101,7 +101,7 @@ export default Component.extend({
       // Send modal close (which bubbles to ApplicationRoute) if clicked outside.
       // We do this because some CSS of ours seems to cover the backdrop and makes
       // it unclickable.
-      return this.attrs.closeModal?.("initiatedByClickOut");
+      return this.closeModal?.("initiatedByClickOut");
     }
   },
 
@@ -154,7 +154,7 @@ export default Component.extend({
     }
 
     if (event.key === "Escape" && this.dismissable) {
-      next(() => this.attrs.closeModal("initiatedByESC"));
+      next(() => this.closeModal("initiatedByESC"));
     }
 
     if (event.key === "Enter" && this.triggerClickOnEnter(event)) {

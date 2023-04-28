@@ -39,7 +39,7 @@ acceptance("Do not disturb", function (needs) {
 
     await click(tiles[0]);
 
-    assert.ok(query(".do-not-disturb-modal.hidden"), "modal is hidden");
+    assert.ok(query(".d-modal.hidden"), "modal is hidden");
 
     assert.ok(
       exists(".header-dropdown-toggle .do-not-disturb-background .d-icon-moon"),
@@ -140,7 +140,7 @@ acceptance("Do not disturb - new user menu", function (needs) {
 
     await click(tiles[0]);
 
-    assert.ok(query(".do-not-disturb-modal.hidden"), "modal is hidden");
+    assert.ok(query(".d-modal.hidden"), "modal is hidden");
 
     assert.ok(
       exists(".header-dropdown-toggle .do-not-disturb-background .d-icon-moon"),

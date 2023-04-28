@@ -8,16 +8,17 @@ import { action } from "@ember/object";
 export default class ModalService extends Service {
   @service appEvents;
 
-  @tracked controllerName;
   @tracked name;
-  @tracked opts;
+  @tracked opts = {};
   @tracked selectedPanel;
 
-  get visible() {
-    return !!this.controllerName;
+  get controllerName() {
+    if (this.name) {
+      return this.opts.admin ? `modals/${this.name}` : this.name;
+    }
   }
 
-  get activeController() {
+  get controller() {
     return (
       this.controllerName &&
       getOwner(this).lookup(`controller:${this.controllerName}`)
@@ -34,40 +35,40 @@ export default class ModalService extends Service {
     }
   }
 
+  set title(value) {
+    this.opts = { ...this.opts, title: value };
+  }
+
   get modalClass() {
-    return (
-      this.opts.modalClass || `${dasherize(this.name).toLowerCase()}-modal`
-    );
+    if (this.name) {
+      return (
+        this.opts.modalClass || `${dasherize(this.name).toLowerCase()}-modal`
+      );
+    }
   }
 
   set modalClass(value) {
-    this.opts.modalClass = value;
-    this.opts = this.opts; // Notify users of tracked property
+    this.opts = { ...this.opts, modalClass: value };
   }
 
   @action
   onSelectPanel() {
-    const handler = this.activeController?.actions?.onSelectPanel;
+    const handler = this.controller?.actions?.onSelectPanel;
     if (handler) {
-      handler.apply(this.activeController);
+      handler.apply(this.controller);
     }
   }
 
   show(name, opts = {}) {
-    const controllerName = (this.controllerName = opts.admin
-      ? `modals/${name}`
-      : name);
-    this.modalName = controllerName;
-
     this.name = name;
     this.opts = opts;
 
-    let controller = getOwner(this).lookup("controller:" + controllerName);
+    let controller = this.controller;
     const templateName = opts.templateName || dasherize(name);
 
     const renderArgs = { into: "application", outlet: "modalBody" };
     if (controller) {
-      renderArgs.controller = controllerName;
+      renderArgs.controller = this.controllerName;
     } else {
       // use a basic controller
       renderArgs.controller = "basic-modal-body";
@@ -80,31 +81,29 @@ export default class ModalService extends Service {
 
     const modalName = `modal/${templateName}`;
     const fullName = opts.admin ? `admin/templates/${modalName}` : modalName;
-    const route = getOwner(this).lookup("route:application");
-    route.render(fullName, renderArgs);
+    this.#applicationRoute.render(fullName, renderArgs);
 
     if (opts.panels) {
-      this.selectedPanel = opts.panel[0];
+      this.selectedPanel = opts.panels[0];
     } else {
       this.selectedPanel = null;
     }
 
-    controller.set("modal", this);
+    controller.setProperties({
+      modal: this,
+      model: opts.model,
+      flashMessage: null,
+    });
 
-    const model = opts.model;
-    if (model) {
-      controller.set("model", model);
-    }
     if (controller.onShow) {
       controller.onShow();
     }
-    controller.set("flashMessage", null);
 
     return controller;
   }
 
   close(initiatedBy) {
-    const controller = this.activeController;
+    const controller = this.controller;
 
     if (controller?.beforeClose) {
       if (controller.beforeClose() === false) {
@@ -112,6 +111,12 @@ export default class ModalService extends Service {
         return;
       }
     }
+
+    this.#applicationRoute.render("hide-modal", {
+      into: "application",
+      outlet: "modalBody",
+    });
+    $(".d-modal.fixed-modal").modal("hide").addClass("hidden");
 
     if (controller) {
       this.appEvents.trigger("modal:closed", {
@@ -128,7 +133,7 @@ export default class ModalService extends Service {
       }
     }
 
-    this.controllerName = this.name = this.selectedPanel = null;
+    this.name = this.selectedPanel = null;
     this.opts = {};
   }
 
@@ -138,5 +143,9 @@ export default class ModalService extends Service {
 
   reopen() {
     $(".d-modal.fixed-modal").modal("show");
+  }
+
+  get #applicationRoute() {
+    return getOwner(this).lookup("route:application");
   }
 }
