@@ -11,7 +11,7 @@
     @onSelectPanel={{this.modal.onSelectPanel}}
     @class="hidden"
     @errors={{this.modal.errors}}
-    @closeModal={{route-action "closeModal"}}
+    @closeModal={{this.closeModal}}
   >
     {{outlet "modalBody"}}
   </DModal>
