@@ -128,7 +128,8 @@ export default class ModalService extends Service {
       }
     }
 
-    this.controllerName = null;
+    this.controllerName = this.name = this.selectedPanel = null;
+    this.opts = {};
   }
 
   hide() {
