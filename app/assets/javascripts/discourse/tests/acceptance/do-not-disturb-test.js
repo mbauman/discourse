@@ -70,7 +70,7 @@ acceptance("Do not disturb", function (needs) {
     );
 
     assert.ok(
-      query(".do-not-disturb-modal.hidden"),
+      query(".d-modal.hidden"),
       "DND modal is hidden after making a choice"
     );
 
@@ -171,7 +171,7 @@ acceptance("Do not disturb - new user menu", function (needs) {
     );
 
     assert.ok(
-      query(".do-not-disturb-modal.hidden"),
+      query(".d-modal.hidden"),
       "DND modal is hidden after making a choice"
     );
 
