@@ -26,17 +26,17 @@ export default class ModalService extends Service {
   }
 
   get title() {
-    if (this.opts.title) {
-      return I18n.t(this.opts.title);
-    } else if (this.opts.titleTranslated) {
+    if (this.opts.titleTranslated) {
       return this.opts.titleTranslated;
+    } else if (this.opts.title) {
+      return I18n.t(this.opts.title);
     } else {
       return null;
     }
   }
 
   set title(value) {
-    this.opts = { ...this.opts, title: value };
+    this.opts = { ...this.opts, titleTranslated: value };
   }
 
   get modalClass() {
