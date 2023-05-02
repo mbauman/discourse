@@ -52,10 +52,10 @@ export default class ModalService extends Service {
   }
 
   @action
-  onSelectPanel() {
+  onSelectPanel(panel) {
     const handler = this.controller?.actions?.onSelectPanel;
     if (handler) {
-      handler.apply(this.controller);
+      handler.apply(this.controller, [panel]);
     }
   }
 
