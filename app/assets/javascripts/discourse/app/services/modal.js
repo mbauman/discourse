@@ -4,6 +4,10 @@ import { getOwner } from "@ember/application";
 import I18n from "I18n";
 import { dasherize } from "@ember/string";
 import { action } from "@ember/object";
+import LegacyControllerShimModal, {
+  connectLegacyController,
+  disconnectLegacyController,
+} from "discourse/components/modal/legacy-controller-shim";
 
 export default class ModalService extends Service {
   @service appEvents;
@@ -11,22 +15,15 @@ export default class ModalService extends Service {
   @tracked name;
   @tracked opts = {};
   @tracked selectedPanel;
+  @tracked modalBodyComponent;
 
-  get controllerName() {
-    if (this.name) {
-      return this.opts.admin ? `modals/${this.name}` : this.name;
-    }
-  }
-
-  get controller() {
-    return (
-      this.controllerName &&
-      getOwner(this).lookup(`controller:${this.controllerName}`)
-    );
-  }
+  @tracked titleOverride;
+  @tracked modalClassOverride;
 
   get title() {
-    if (this.opts.titleTranslated) {
+    if (this.titleOverride) {
+      return this.titleOverride;
+    } else if (this.opts.titleTranslated) {
       return this.opts.titleTranslated;
     } else if (this.opts.title) {
       return I18n.t(this.opts.title);
@@ -36,11 +33,17 @@ export default class ModalService extends Service {
   }
 
   set title(value) {
-    this.opts = { ...this.opts, titleTranslated: value };
+    this.titleOverride = value;
   }
 
   get modalClass() {
-    if (this.name) {
+    if (!this.#isRendered) {
+      return null;
+    }
+
+    if (this.modalClassOverride) {
+      return this.modalClassOverride;
+    } else {
       return (
         this.opts.modalClass || `${dasherize(this.name).toLowerCase()}-modal`
       );
@@ -48,7 +51,7 @@ export default class ModalService extends Service {
   }
 
   set modalClass(value) {
-    this.opts = { ...this.opts, modalClass: value };
+    this.modalClassOverride = value;
   }
 
   @action
@@ -59,29 +62,8 @@ export default class ModalService extends Service {
     }
   }
 
-  show(name, opts = {}) {
-    this.name = name;
+  show(modal, opts = {}) {
     this.opts = opts;
-
-    let controller = this.controller;
-    const templateName = opts.templateName || dasherize(name);
-
-    const renderArgs = { into: "application", outlet: "modalBody" };
-    if (controller) {
-      renderArgs.controller = this.controllerName;
-    } else {
-      // use a basic controller
-      renderArgs.controller = "basic-modal-body";
-      controller = getOwner(this).lookup(`controller:${renderArgs.controller}`);
-    }
-
-    if (opts.addModalBodyView) {
-      renderArgs.view = "modal-body";
-    }
-
-    const modalName = `modal/${templateName}`;
-    const fullName = opts.admin ? `admin/templates/${modalName}` : modalName;
-    this.#applicationRoute.render(fullName, renderArgs);
 
     if (opts.panels) {
       this.selectedPanel = opts.panels[0];
@@ -89,51 +71,33 @@ export default class ModalService extends Service {
       this.selectedPanel = null;
     }
 
-    controller.setProperties({
-      modal: this,
-      model: opts.model,
-      flashMessage: null,
-    });
+    if (typeof modal === "string") {
+      this.modalBodyComponent = LegacyControllerShimModal;
+      this.name = modal;
 
-    if (controller.onShow) {
-      controller.onShow();
+      return connectLegacyController(modal, opts, getOwner(this));
+    } else {
+      throw "todo - implement component support";
     }
-
-    return controller;
   }
 
   close(initiatedBy) {
-    const controller = this.controller;
-
-    if (controller?.beforeClose) {
-      if (controller.beforeClose() === false) {
-        // controller cancelled close
-        return;
-      }
+    if (!this.#isRendered) {
+      return;
     }
 
-    this.#applicationRoute.render("hide-modal", {
-      into: "application",
-      outlet: "modalBody",
-    });
-    $(".d-modal.fixed-modal").modal("hide").addClass("hidden");
-
-    if (controller) {
-      this.appEvents.trigger("modal:closed", {
-        name: this.controllerName,
-        controller,
-      });
-
-      if (controller.onClose) {
-        controller.onClose({
-          initiatedByCloseButton: initiatedBy === "initiatedByCloseButton",
-          initiatedByClickOut: initiatedBy === "initiatedByClickOut",
-          initiatedByESC: initiatedBy === "initiatedByESC",
-        });
-      }
+    if (this.modalBodyComponent === LegacyControllerShimModal) {
+      disconnectLegacyController(initiatedBy, this.name, getOwner(this));
+    } else {
+      throw "todo - implement component support";
     }
 
-    this.name = this.selectedPanel = null;
+    this.name =
+      this.selectedPanel =
+      this.modalClassOverride =
+      this.titleOverride =
+      this.modalBodyComponent =
+        null;
     this.opts = {};
   }
 
@@ -145,7 +109,7 @@ export default class ModalService extends Service {
     $(".d-modal.fixed-modal").modal("show");
   }
 
-  get #applicationRoute() {
-    return getOwner(this).lookup("route:application");
+  get #isRendered() {
+    return !!this.modalBodyComponent;
   }
 }
