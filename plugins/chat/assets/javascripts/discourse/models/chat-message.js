@@ -51,6 +51,7 @@ export default class ChatMessage {
   @tracked thread;
   @tracked threadReplyCount;
   @tracked manager = null;
+  @tracked streaming = false;
 
   @tracked _cooked;
 
@@ -71,6 +72,7 @@ export default class ChatMessage {
     this.reviewableId = args.reviewableId || args.reviewable_id;
     this.userFlagStatus = args.userFlagStatus || args.user_flag_status;
     this.draft = args.draft;
+    this.streaming = args.streaming;
     this.message = args.message || "";
     this._cooked = args.cooked || "";
     this.thread = args.thread;
