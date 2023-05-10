@@ -87,7 +87,14 @@ export default class ModalService extends Service {
     }
 
     if (this.modalBodyComponent === LegacyControllerShimModal) {
-      disconnectLegacyController(initiatedBy, this.name, getOwner(this));
+      const continueClose = disconnectLegacyController(
+        initiatedBy,
+        this.name,
+        getOwner(this)
+      );
+      if (!continueClose) {
+        return;
+      }
     } else {
       throw "todo - implement component support";
     }

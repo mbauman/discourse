@@ -46,7 +46,7 @@ export function disconnectLegacyController(
   if (activeController?.beforeClose) {
     if (activeController.beforeClose() === false) {
       // controller cancelled close
-      return;
+      return false;
     }
   }
 
@@ -72,6 +72,8 @@ export function disconnectLegacyController(
   }
 
   activeController = null;
+
+  return true;
 }
 
 export default templateOnly();
