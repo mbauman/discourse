@@ -4448,7 +4448,7 @@ ember-test-selectors@^6.0.0:
     ember-cli-babel "^7.26.4"
     ember-cli-version-checker "^5.1.2"
 
-ember-this-fallback@^0.1:
+ember-this-fallback@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/ember-this-fallback/-/ember-this-fallback-0.1.0.tgz#87b173785802ee36878daabcae2a3136d7e54cb7"
   integrity sha512-F7+1OzGIbEUr6FAfaMx5yxcd7K8qmSBJodjBIvbbc63RjuV7gEkGg9JBB0CwlwSER7UmuP8FSOjAbXC8UUzmfg==

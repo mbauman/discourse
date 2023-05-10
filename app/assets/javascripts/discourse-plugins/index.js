@@ -230,4 +230,13 @@ module.exports = {
   shouldLoadPluginTestJs() {
     return EmberApp.env() === "development" || process.env.LOAD_PLUGINS === "1";
   },
+
+  setupPreprocessorRegistry(type, registry) {
+    if (type === "self") {
+      registry.add("htmlbars-ast-plugin", {
+        name: "ember-this-fallback",
+        plugin: require.resolve("ember-this-fallback/lib/this-fallback-plugin"),
+      });
+    }
+  },
 };
