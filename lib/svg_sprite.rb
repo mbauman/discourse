@@ -139,6 +139,7 @@ module SvgSprite
         globe
         globe-americas
         grip-lines
+        grip-horizontal
         hand-point-right
         hands-helping
         heart
@@ -202,6 +203,7 @@ module SvgSprite
         tag
         tags
         tasks
+        th
         thermometer-three-quarters
         thumbs-down
         thumbs-up
