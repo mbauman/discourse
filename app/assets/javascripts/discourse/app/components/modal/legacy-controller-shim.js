@@ -76,4 +76,11 @@ export function disconnectLegacyController(
   return true;
 }
 
+export function controllerOnSelectPanel(panel) {
+  const handler = activeController?.actions?.onSelectPanel;
+  if (handler) {
+    handler.apply(activeController, [panel]);
+  }
+}
+
 export default templateOnly();

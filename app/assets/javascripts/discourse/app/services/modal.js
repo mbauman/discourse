@@ -6,6 +6,7 @@ import { dasherize } from "@ember/string";
 import { action } from "@ember/object";
 import LegacyControllerShimModal, {
   connectLegacyController,
+  controllerOnSelectPanel,
   disconnectLegacyController,
 } from "discourse/components/modal/legacy-controller-shim";
 
@@ -56,10 +57,7 @@ export default class ModalService extends Service {
 
   @action
   onSelectPanel(panel) {
-    const handler = this.controller?.actions?.onSelectPanel;
-    if (handler) {
-      handler.apply(this.controller, [panel]);
-    }
+    controllerOnSelectPanel(panel);
   }
 
   show(modal, opts = {}) {
