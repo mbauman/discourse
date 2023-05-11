@@ -139,7 +139,6 @@ module SvgSprite
         globe
         globe-americas
         grip-lines
-        grip-horizontal
         hand-point-right
         hands-helping
         heart
