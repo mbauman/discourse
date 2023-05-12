@@ -12,5 +12,10 @@
   @errors={{this.modal.errors}}
   @closeModal={{this.closeModal}}
 >
-  <this.modal.modalBodyComponent />
+  <this.modal.modalBodyComponent
+    @model={{this.modal.opts.model}}
+    @flash={{this.flash}}
+    @clearFlash={{this.clearFlash}}
+    @closeModal={{this.closeModal}}
+  />
 </DModal>

@@ -1,4 +1,4 @@
-import Service, { inject as service } from "@ember/service";
+import Service from "@ember/service";
 import { tracked } from "@glimmer/tracking";
 import { getOwner } from "@ember/application";
 import I18n from "I18n";
@@ -11,8 +11,6 @@ import LegacyControllerShimModal, {
 } from "discourse/components/modal/legacy-controller-shim";
 
 export default class ModalService extends Service {
-  @service appEvents;
-
   @tracked name;
   @tracked opts = {};
   @tracked selectedPanel;
@@ -44,10 +42,12 @@ export default class ModalService extends Service {
 
     if (this.modalClassOverride) {
       return this.modalClassOverride;
-    } else {
+    } else if (this.modalBodyComponent === LegacyControllerShimModal) {
       return (
         this.opts.modalClass || `${dasherize(this.name).toLowerCase()}-modal`
       );
+    } else {
+      return this.modalBodyComponent.modalClass;
     }
   }
 
@@ -75,7 +75,7 @@ export default class ModalService extends Service {
 
       return connectLegacyController(modal, opts, getOwner(this));
     } else {
-      throw "todo - implement component support";
+      this.modalBodyComponent = modal;
     }
   }
 
@@ -94,7 +94,7 @@ export default class ModalService extends Service {
         return;
       }
     } else {
-      throw "todo - implement component support";
+      $(".d-modal.fixed-modal").modal("hide").addClass("hidden");
     }
 
     this.name =
