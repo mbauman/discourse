@@ -115,6 +115,7 @@ import { registerModelTransformer } from "discourse/lib/model-transformers";
 import { registerCustomUserNavMessagesDropdownRow } from "discourse/controllers/user-private-messages";
 import { registerFullPageSearchType } from "discourse/controllers/full-page-search";
 import { registerHashtagType } from "discourse/lib/hashtag-autocomplete";
+import { addSaveAttributeToPreferencesController } from "discourse/lib/preferences-controllers-save-attrs-register";
 
 // If you add any methods to the API ensure you bump up the version number
 // based on Semantic Versioning 2.0.0. Please update the changelog at
@@ -2177,6 +2178,10 @@ class PluginApi {
    */
   registerHashtagType(type, typeClass) {
     registerHashtagType(type, typeClass);
+  }
+
+  addSaveAttributeToPreferencesController(controllerName, attribute) {
+    addSaveAttributeToPreferencesController(controllerName, attribute);
   }
 }
 
