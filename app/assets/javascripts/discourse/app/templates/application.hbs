@@ -7,7 +7,7 @@
     @outletArgs={{hash currentPath=this.router._router.currentPath}}
   />
 
-  {{#if showSiteHeader}}
+  {{#if this.showSiteHeader}}
     <SiteHeader
       @canSignUp={{this.canSignUp}}
       @showCreateAccount={{route-action "showCreateAccount"}}
