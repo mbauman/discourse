@@ -7,5 +7,9 @@ globalThis.deprecationWorkflow.config = {
     { handler: "silence", matchId: "routing.transition-methods" },
     { handler: "silence", matchId: "route-disconnect-outlet" },
     { handler: "silence", matchId: "discourse.select-kit" },
+    {
+      handler: "silence",
+      matchId: "ember-this-fallback.this-property-fallback",
+    },
   ],
 };

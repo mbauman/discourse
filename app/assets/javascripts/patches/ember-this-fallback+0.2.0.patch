@@ -1,0 +1,13 @@
+diff --git a/node_modules/ember-this-fallback/addon/deprecations-helper.ts b/node_modules/ember-this-fallback/addon/deprecations-helper.ts
+index f8dfb93..be73826 100644
+--- a/node_modules/ember-this-fallback/addon/deprecations-helper.ts
++++ b/node_modules/ember-this-fallback/addon/deprecations-helper.ts
+@@ -22,6 +22,8 @@ const deprecationsHelper = helper<DeprecationsHelperSignature>(
+   ([deprecationsJson]) => {
+     const deprecations = assertIsDeprecations(JSON.parse(deprecationsJson));
+     for (const deprecation of deprecations) {
++      let deprecationInfo : any = deprecation[2];
++      deprecationInfo.id = "ember-this-fallback.this-property-fallback"
+       deprecate(...deprecation);
+     }
+   }
