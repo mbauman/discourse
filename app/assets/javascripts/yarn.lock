@@ -4448,10 +4448,10 @@ ember-test-selectors@^6.0.0:
     ember-cli-babel "^7.26.4"
     ember-cli-version-checker "^5.1.2"
 
-ember-this-fallback@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/ember-this-fallback/-/ember-this-fallback-0.1.0.tgz#87b173785802ee36878daabcae2a3136d7e54cb7"
-  integrity sha512-F7+1OzGIbEUr6FAfaMx5yxcd7K8qmSBJodjBIvbbc63RjuV7gEkGg9JBB0CwlwSER7UmuP8FSOjAbXC8UUzmfg==
+ember-this-fallback@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/ember-this-fallback/-/ember-this-fallback-0.2.0.tgz#8808f3b0fd16221cae891a9148a569d0a994dfa0"
+  integrity sha512-euGEAXx7uudK8OajnKO096lAZ4qFJUd6+lxlpnbeTl0yof3tEsZulOhRz0ndcd6L2OSAa3817+Z/jyJ4Nwxn3A==
   dependencies:
     "@glimmer/syntax" "^0.84.3"
     babel-plugin-ember-template-compilation "^2.0.2"

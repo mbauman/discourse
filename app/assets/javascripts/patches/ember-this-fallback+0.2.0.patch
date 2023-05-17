@@ -1,13 +1,58 @@
-diff --git a/node_modules/ember-this-fallback/addon/deprecations-helper.ts b/node_modules/ember-this-fallback/addon/deprecations-helper.ts
-index f8dfb93..be73826 100644
---- a/node_modules/ember-this-fallback/addon/deprecations-helper.ts
-+++ b/node_modules/ember-this-fallback/addon/deprecations-helper.ts
-@@ -22,6 +22,8 @@ const deprecationsHelper = helper<DeprecationsHelperSignature>(
-   ([deprecationsJson]) => {
-     const deprecations = assertIsDeprecations(JSON.parse(deprecationsJson));
-     for (const deprecation of deprecations) {
-+      let deprecationInfo : any = deprecation[2];
-+      deprecationInfo.id = "ember-this-fallback.this-property-fallback"
-       deprecate(...deprecation);
+diff --git a/node_modules/ember-this-fallback/index.js b/node_modules/ember-this-fallback/index.js
+index 3cd1cd7..64fc2ab 100644
+--- a/node_modules/ember-this-fallback/index.js
++++ b/node_modules/ember-this-fallback/index.js
+@@ -9,7 +9,8 @@ module.exports = {
+     // This check ensures that the plugin runs only on the app's code, not on
+     // this addon's own code.
+     if (type === 'parent') {
+-      registry.add('htmlbars-ast-plugin', this._buildPlugin());
++      // We don't want the transform to run on Discourse core code. We manually re-apply in our theme/plugin compilation pipeline
++      // registry.add('htmlbars-ast-plugin', this._buildPlugin());
      }
-   }
+   },
+ 
+diff --git a/node_modules/ember-this-fallback/lib/helpers/deprecations.js b/node_modules/ember-this-fallback/lib/helpers/deprecations.js
+index 5a00c44..50215fa 100644
+--- a/node_modules/ember-this-fallback/lib/helpers/deprecations.js
++++ b/node_modules/ember-this-fallback/lib/helpers/deprecations.js
+@@ -7,7 +7,7 @@ exports.deprecationOptionsFor = void 0;
+ const assert_1 = __importDefault(require("../types/assert"));
+ const CURRENT_DEPRECATIONS = [
+     {
+-        id: 'this-property-fallback',
++        id: 'ember-this-fallback.this-property-fallback',
+         until: 'n/a',
+         for: 'ember-this-fallback',
+         url: 'https://deprecations.emberjs.com/v3.x#toc_this-property-fallback',
+@@ -16,7 +16,7 @@ const CURRENT_DEPRECATIONS = [
+         },
+     },
+ ];
+-const DEPRECATION_OPTIONS_MAP = new Map(CURRENT_DEPRECATIONS.map((options) => [options.id, options]));
++const DEPRECATION_OPTIONS_MAP = new Map(CURRENT_DEPRECATIONS.map((options) => ["this-property-fallback", options]));
+ function deprecationOptionsFor(id) {
+     const options = DEPRECATION_OPTIONS_MAP.get(id);
+     (0, assert_1.default)(`expected to find DeprecationOptions for id=${id}`, options);
+diff --git a/node_modules/ember-this-fallback/lib/helpers/deprecations.ts b/node_modules/ember-this-fallback/lib/helpers/deprecations.ts
+index a8b1c36..243ecb1 100644
+--- a/node_modules/ember-this-fallback/lib/helpers/deprecations.ts
++++ b/node_modules/ember-this-fallback/lib/helpers/deprecations.ts
+@@ -7,7 +7,7 @@ export type DeprecationOptions = Deprecation[2];
+ 
+ const CURRENT_DEPRECATIONS = [
+   {
+-    id: 'this-property-fallback' as const,
++    id: 'ember-this-fallback.this-property-fallback' as const,
+     until: 'n/a',
+     for: 'ember-this-fallback',
+     url: 'https://deprecations.emberjs.com/v3.x#toc_this-property-fallback',
+@@ -20,7 +20,7 @@ const CURRENT_DEPRECATIONS = [
+ type DeprecationId = (typeof CURRENT_DEPRECATIONS)[number]['id'];
+ 
+ const DEPRECATION_OPTIONS_MAP = new Map(
+-  CURRENT_DEPRECATIONS.map((options) => [options.id, options])
++  CURRENT_DEPRECATIONS.map((options) => ["ember-this-fallback", options])
+ );
+ 
+ export function deprecationOptionsFor(id: DeprecationId): DeprecationOptions {
